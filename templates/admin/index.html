@@ -1,7 +1,26 @@
 {% extends "admin/base_site.html" %}
 {% load i18n static %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "css/vendor/chartist.min.css" %}">
+<style>
+    /* Use this selector to override the line style on a given series */
+    .ct-series-a .ct-line {
+      /* Set the colour of this series line */
+      stroke: rgba(18, 128, 0, 0.43);
+      /* Control the thikness of your lines */
+      stroke-width: 1px;
+    }
+    .ct-series-a .ct-point {
+      /* Colour of your points */
+      stroke: #074000;
+      /* Size of your points */
+      stroke-width: 3px;
+    }
+</style>
+{% endblock %}
 
 {% block coltype %}colMS{% endblock %}
 
@@ -87,5 +106,41 @@
 
 
 {% block extra_content %}
-<h2>Devices: {{ devices_count }}</h2>
+<h2>Total Devices: {{ devices_count }}</h2>
+{% for device in devices %}
+<br>
+<table>
+    <thead><tr><th colspan=3 style="font-size: 15px">{{ device.name }}</th></tr></thead>
+    <tbody><tr>
+        <td>
+            <input type=hidden value="{{ device.id }}" name="device-order-{{ forloop.counter0 }}">
+            <p style="font-weight: bold">Disk Space left (GB)</p>
+            <div id="chart-disk-{{ forloop.counter0 }}" style="width: 500px; height: 300px" ></div>
+        </td>
+        <td>
+            <p style="font-weight: bold">CPU (%)</p>
+            <div id="chart-cpu-{{ forloop.counter0 }}" style="width: 500px; height: 300px" ></div>
+        </td>
+        <td>
+            <p style="font-weight: bold">RAM (%)</p>
+            <div id="chart-ram-{{ forloop.counter0 }}" style="width: 500px; height: 300px" ></div>
+        </td>
+    </tr></tbody>
+</table>
+<hr>
+
+
+{% endfor %}
+{% endblock %}
+
+
+{% block extra_js %}
+<script type="text/javascript">
+    var devices_count = {{ devices_count }}
+</script>
+<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
+<script src="{% static 'js/ajax_setup.js' %}"></script>
+<script src="{% static 'js/vendor/moment.min.js' %}"></script>
+<script src="{% static 'js/vendor/chartist.min.js' %}"></script>
+<script src="{% static 'js/graphs.js' %}"></script>
 {% endblock %}
