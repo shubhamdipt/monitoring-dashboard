@@ -20,7 +20,7 @@ LOGIN_URL = "/admin/"
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'monitoringdashboard.apps.CustomAdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -61,7 +61,7 @@ USE_TZ = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['{0}/templates/'.format(BASE_DIR)],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
