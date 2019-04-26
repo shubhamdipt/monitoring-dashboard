@@ -112,16 +112,16 @@
 <table>
     <thead><tr><th colspan=3 style="font-size: 15px">{{ device.name }}</th></tr></thead>
     <tbody><tr>
-        <td>
+        <td style="border-bottom: none;">
             <input type=hidden value="{{ device.id }}" name="device-order-{{ forloop.counter0 }}">
             <p style="font-weight: bold">Disk Space left (GB)</p>
             <div id="chart-disk-{{ forloop.counter0 }}" style="width: 500px; height: 300px" ></div>
         </td>
-        <td>
+        <td style="border-bottom: none;">
             <p style="font-weight: bold">CPU (%)</p>
             <div id="chart-cpu-{{ forloop.counter0 }}" style="width: 500px; height: 300px" ></div>
         </td>
-        <td>
+        <td style="border-bottom: none;">
             <p style="font-weight: bold">RAM (%)</p>
             <div id="chart-ram-{{ forloop.counter0 }}" style="width: 500px; height: 300px" ></div>
         </td>
