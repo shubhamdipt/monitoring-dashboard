@@ -106,6 +106,7 @@
 
 
 {% block extra_content %}
+{% if devices_count %}
 <h2>Total Devices: {{ devices_count }}</h2>
 {% for device in devices %}
 <br>
@@ -128,9 +129,8 @@
     </tr></tbody>
 </table>
 <hr>
-
-
 {% endfor %}
+{% endif %}
 {% endblock %}
 
 
