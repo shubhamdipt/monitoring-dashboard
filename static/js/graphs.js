@@ -42,7 +42,7 @@ function createGraph(device_id, device_order, data_type, data) {
   });
 }
 
-$(function () {
+function updateCharts() {
   for (var i = 0; i < devices_count; i++) {
     (function () {
       var device_id = $('input[name=device-order-'+ i +']').val();
@@ -53,6 +53,10 @@ $(function () {
         createGraph(device_id, device_order, "MEMORY_USAGE", data["data"]);
       })
     })();
-
   }
+}
+
+$(function () {
+  updateCharts();
+  setInterval(function(){updateCharts()}, 5 * 60 * 1000);
 });
