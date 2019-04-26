@@ -3,13 +3,8 @@ import requests
 import json
 
 
-def send_to_slack_channel(channel, text):
+def send_to_slack_channel(url, text):
     """Sending messages to Slack channels."""
-
-    try:
-        url = settings.SLACK_CHANNELS[channel]
-    except KeyError:
-        url = settings.SLACK_CHANNELS["default"]
 
     payload = {
         "text": text

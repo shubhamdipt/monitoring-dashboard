@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_rq',
     # Apps
     'servers',
     'notifications',
@@ -140,3 +141,67 @@ STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+"""########################################################################
+#######                    Caching                                    #####
+########################################################################"""
+
+redis_host = config.get('REDIS_HOST')
+redis_port = config.get('REDIS_PORT')
+if DEBUG:
+    CACHE_MIDDLEWARE_SECONDS = 0
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake'
+        },
+        'rq': {
+            'BACKEND': 'redis_cache.cache.RedisCache',
+            'LOCATION': '{host}:{port}'.format(host=redis_host, port=redis_port),
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'MAX_ENTRIES': 5000,
+            },
+        },
+    }
+else:
+    CACHE_MIDDLEWARE_SECONDS = 60
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': '/var/tmp/django_cache',
+            'TIMEOUT': 86400,  # 1 day
+            'OPTIONS': {
+                'MAX_ENTRIES': 5000
+            }
+        },
+        'rq': {
+            'BACKEND': 'redis_cache.cache.RedisCache',
+            'LOCATION': '{host}:{port}'.format(host=redis_host, port=redis_port),
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'MAX_ENTRIES': 5000,
+            },
+        },
+    }
+
+
+"""########################################################################
+#######                        Queueing of Tasks                     #####
+########################################################################"""
+
+DEFAULT_QUEUE = 'default'
+HIGH_QUEUE = 'high'
+LOW_QUEUE = 'low'
+RQ_QUEUES = {
+    DEFAULT_QUEUE: {
+        'USE_REDIS_CACHE': 'rq',
+    },
+    HIGH_QUEUE: {
+        'USE_REDIS_CACHE': 'rq',
+    },
+    LOW_QUEUE: {
+        'USE_REDIS_CACHE': 'rq',
+    },
+}

@@ -22,7 +22,10 @@ urlpatterns = [
     path("", RedirectView.as_view(url="/admin")),
     re_path(r'^servers/', include('servers.urls')),
 ]
-
+# Django rq
+urlpatterns += [
+    path('django-rq/', include('django_rq.urls'))
+]
 
 # Admin headers
 admin.site.site_title = "Monitoring dashboard"

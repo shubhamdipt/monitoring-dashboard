@@ -8,7 +8,6 @@ DATA_TYPES = {
     "MEMORY_USAGE": 1,
     "DISK_SPACE_LEFT": 2
 }
-DATA_TYPE_CHOICES = ((val, _(key)) for key, val in DATA_TYPES.items())
 
 
 class Device(models.Model):
@@ -30,6 +29,8 @@ class Device(models.Model):
 
 class DeviceData(models.Model):
     """Data from a certain device"""
+
+    DATA_TYPE_CHOICES = ((val, _(key)) for key, val in DATA_TYPES.items())
 
     device = models.ForeignKey(
         Device,
@@ -54,8 +55,9 @@ class DeviceData(models.Model):
 class Alarm(models.Model):
     """Model for alarms"""
 
+    DATA_TYPE_CHOICES = ((val, _(key)) for key, val in DATA_TYPES.items())
+
     COMPARISON = (
-        (0, "="),
         (1, ">"),
         (2, "<")
     )
@@ -63,8 +65,8 @@ class Alarm(models.Model):
         _("Data Type"),
         choices=DATA_TYPE_CHOICES
     )
-    comparison_type = models.IntegerField("Comparison", choices=COMPARISON)
-    comparison_value = models.FloatField("Value", help_text="Either in % or in GB")
+    comparison_type = models.IntegerField(_("Comparison"), choices=COMPARISON)
+    comparison_value = models.FloatField(_("Value"), help_text="Either in % or in GB")
 
     class Meta:
         verbose_name = _("Alarm")
@@ -80,6 +82,14 @@ class Alarm(models.Model):
 
 class DeviceAlarm(models.Model):
     """Model for device alarms"""
+
+    FREQUENCY_CHOICES = (
+        (300, _("5 minutes")),
+        (3600, _("hourly")),
+        (86400, _("daily")),
+        (604800, _("weekly")),
+        (2592000, _("monthly")),
+    )
 
     device = models.ForeignKey(
         Device,
@@ -98,6 +108,7 @@ class DeviceAlarm(models.Model):
         null=True,
         blank=True
     )
+    frequency = models.IntegerField(_("Frequency"), choices=FREQUENCY_CHOICES, default=3600)
     last_reported = models.DateTimeField(_("Last reported"), null=True, blank=True)
     created = models.DateTimeField(_("Created At"), auto_now_add=True)
 

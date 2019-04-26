@@ -32,9 +32,9 @@ class DeviceDataAdmin(admin.ModelAdmin):
 @admin.register(DeviceAlarm)
 class DeviceAlarmAdmin(admin.ModelAdmin):
 
-    list_display = ("id", "device", "alarm", "notification", "last_reported", )
+    list_display = ("id", "device", "alarm", "frequency", "notification", "last_reported", )
     ordering = ("-created",)
-    list_filter = ("alarm", "last_reported", )
+    list_filter = ("alarm", "last_reported", "device", )
 
 
 @admin.register(Alarm)
