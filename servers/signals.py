@@ -10,26 +10,27 @@ import django_rq
 def create_scheduler(sender, instance, created, **kwargs):
 
     new_job_kwargs = {"device_alarm_id": instance.id}
-    scheduler = django_rq.get_scheduler('default')
-    jobs = [i for i in scheduler.get_jobs() if i.kwargs == new_job_kwargs]
-    if jobs:
-        scheduler.cancel(jobs[0])
-    scheduler.schedule(
-        scheduled_time=datetime.utcnow(),
+    scheduler = django_rq.get_scheduler('high')
+    jobs = [i for i in scheduler.get_jobs() if i.kwargs == new_job_kwargs and
+            i.func.__name__ == "check_alarm"]
+    for i in jobs:
+        scheduler.cancel(i.id)
+    scheduler.cron(
+        cron_string=instance.frequency,
         func=check_alarm,
         args=None,
         kwargs=new_job_kwargs,
-        interval=instance.frequency,
         repeat=None,
-        meta={}
+        meta={},
     )
 
 
 @receiver(pre_delete, sender=DeviceAlarm)
 def delete_scheduler(sender, instance, **kwargs):
 
-    scheduler = django_rq.get_scheduler('default')
+    scheduler = django_rq.get_scheduler('high')
     old_job_kwargs = {"device_alarm_id": instance.id}
-    jobs = [i for i in scheduler.get_jobs() if i.kwargs == old_job_kwargs]
-    if jobs:
-        scheduler.cancel(jobs[0])
+    jobs = [i for i in scheduler.get_jobs() if i.kwargs == old_job_kwargs and
+            i.func.__name__ == "check_alarm"]
+    for i in jobs:
+        scheduler.cancel(i.id)

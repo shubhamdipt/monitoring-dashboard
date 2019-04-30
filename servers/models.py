@@ -51,6 +51,12 @@ class DeviceData(models.Model):
     def __str__(self):
         return str(self.pk)
 
+    @property
+    def readable_value(self):
+        if self.data_type == DATA_TYPES["DISK_SPACE_LEFT"]:
+            return "{0:.3f} GB".format(float(self.data / 1073741824))
+        return "{} %".format(self.data)
+
 
 class Alarm(models.Model):
     """Model for alarms"""
@@ -83,13 +89,15 @@ class Alarm(models.Model):
 class DeviceAlarm(models.Model):
     """Model for device alarms"""
 
-    FREQUENCY_CHOICES = (
-        (300, _("5 minutes")),
-        (3600, _("hourly")),
-        (86400, _("daily")),
-        (604800, _("weekly")),
-        (2592000, _("monthly")),
-    )
+    TIME_IN_SECONDS = {
+        "*/5 * * * *": (300, _("5 minutes")),
+        "0 * * * *": (3600, _("Hourly")),
+        "0 9 * * *": (86400, _("Daily at 9am")),
+        "0 9 * * 1": (604800, _("Weekly on Mondays")),
+        "0 9 1 * *": (2592000, _("Monthly on 1st")),
+    }
+
+    CRON_CHOICES = ((key, val[1]) for key, val in TIME_IN_SECONDS.items())
 
     device = models.ForeignKey(
         Device,
@@ -108,7 +116,12 @@ class DeviceAlarm(models.Model):
         null=True,
         blank=True
     )
-    frequency = models.IntegerField(_("Frequency"), choices=FREQUENCY_CHOICES, default=3600)
+    frequency = models.CharField(
+        _("Frequency"),
+        choices=CRON_CHOICES,
+        default="0 * * * *",
+        max_length=30
+    )
     last_reported = models.DateTimeField(_("Last reported"), null=True, blank=True)
     created = models.DateTimeField(_("Created At"), auto_now_add=True)
 
