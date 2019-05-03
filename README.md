@@ -5,7 +5,7 @@ A dashboard displaying the performance of any server.
 ## Requirements
 
 * Python3
-* Sqlite3
+* Sqlite3 (no need to install. It will be created by default)
 * Redis (for scheduling alarms notifications)
 
 ```
@@ -18,11 +18,18 @@ To get the data from the server, check out https://github.com/shubhamdipt/server
 
 
 ## Usage
+
+### Create a superuser for login.
+```
+$./manage.sh createsuperuser
+```
+
+### Initiate the web server
 ```
 $./manage.sh runserver
 ```
 
-### Creating a device
+### Adding a device
 * Add IP address of your device to Device model.
 * The data coming from the device gets added to the DeviceData model.
 * In the admin index page, then you can visualize the graphs of all devices.
