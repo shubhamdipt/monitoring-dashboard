@@ -6,7 +6,8 @@ from notifications.models import Notification
 DATA_TYPES = {
     "CPU_USAGE": 0,
     "MEMORY_USAGE": 1,
-    "DISK_SPACE_LEFT": 2
+    "DISK_SPACE_LEFT": 2,
+    "DOWNTIME": 3,
 }
 
 
@@ -63,16 +64,23 @@ class Alarm(models.Model):
 
     DATA_TYPE_CHOICES = ((val, _(key)) for key, val in DATA_TYPES.items())
 
+    GREATER_THAN = 1
+    LESS_THAN = 2
+
     COMPARISON = (
-        (1, ">"),
-        (2, "<")
+        (GREATER_THAN, ">"),
+        (LESS_THAN, "<")
     )
     data_type = models.IntegerField(
         _("Data Type"),
         choices=DATA_TYPE_CHOICES
     )
     comparison_type = models.IntegerField(_("Comparison"), choices=COMPARISON)
-    comparison_value = models.FloatField(_("Value"), help_text="Either in % or in GB")
+    comparison_value = models.FloatField(
+        _("Value"),
+        help_text="Either in % or "
+                  "in GB for disk space or "
+                  "in minutes for downtime")
 
     class Meta:
         verbose_name = _("Alarm")
@@ -82,8 +90,16 @@ class Alarm(models.Model):
         return "{} {} {}".format(
             self.get_data_type_display(),
             self.get_comparison_type_display(),
-            self.comparison_value
+            self.readable_value
         )
+
+    @property
+    def readable_value(self):
+        if self.data_type == DATA_TYPES["DISK_SPACE_LEFT"]:
+            return "{} GB".format(self.comparison_value)
+        if self.data_type == DATA_TYPES["DOWNTIME"]:
+            return "{} minutes".format(self.comparison_value)
+        return "{} %".format(self.comparison_value)
 
 
 class DeviceAlarm(models.Model):

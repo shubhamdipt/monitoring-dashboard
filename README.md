@@ -41,4 +41,11 @@ $./manage.sh runserver
 
 On creation of a device alarm, it creates a scheduled task based on the frequency provided.
 
+### NOTE
+**Device Alarm** : The frequency must be higher than or equal to the frequency (interval) of the incoming data from the 
+respective Device added in the Device Alarm.
+
+**Device Alarm for DOWNTIME**: The respective alarm comparison value(i.e. time period) entered should be higher than the frequency (interval) of the incoming data from the 
+respective Device added in the Device Alarm.
+
 ![Sample of the Admin page](https://github.com/shubhamdipt/monitoring-dashboard/blob/master/sample.png)

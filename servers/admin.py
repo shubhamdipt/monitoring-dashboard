@@ -6,6 +6,7 @@ from servers.models import (
     DeviceAlarm,
     DATA_TYPES,
 )
+from servers.forms import AlarmForm
 
 
 @admin.register(Device)
@@ -22,6 +23,7 @@ class DeviceDataAdmin(admin.ModelAdmin):
     list_display = ("id", "device", "data_type", "readable_value", "created", )
     list_filter = ("device", "data_type", )
     ordering = ("-created", )
+    readonly_fields = ("device", "data_type", "data", )
 
 
 @admin.register(DeviceAlarm)
@@ -35,5 +37,7 @@ class DeviceAlarmAdmin(admin.ModelAdmin):
 @admin.register(Alarm)
 class AlarmAdmin(admin.ModelAdmin):
 
-    list_display = ("id", "data_type", "comparison_type", "comparison_value", )
+    form = AlarmForm
+
+    list_display = ("id", "data_type", "comparison_type", "readable_value", )
     list_filter = ("data_type", )
