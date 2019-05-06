@@ -17,7 +17,7 @@
       /* Colour of your points */
       stroke: #074000;
       /* Size of your points */
-      stroke-width: 3px;
+      stroke-width: 2px;
     }
 </style>
 {% endblock %}
@@ -108,6 +108,12 @@
 {% block extra_content %}
 {% if devices_count %}
 <h2>Total Devices: {{ devices_count }}</h2>
+<select style="margin: 20px 0;" id="timeframe" onchange="changeTimeFrame()">
+  <option value=7 selected=selected>Last 7 days</option>
+  <option value=1>Last 24 hours</option>
+  <option value=30>Last 30 days</option>
+  <option value=90>Last 3 months</option>
+</select>
 {% for device in devices %}
 <br>
 <table>

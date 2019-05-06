@@ -3,6 +3,7 @@ var DATA_TYPE_GRAPH_ID = {
   MEMORY_USAGE: "chart-ram-",
   DISK_SPACE_LEFT: "chart-disk-"
 };
+var plot_days = 7;
 
 function format_disk_space(value) {
   return (value / 1073741824).toFixed(2)
@@ -42,12 +43,12 @@ function createGraph(device_id, device_order, data_type, data) {
   });
 }
 
-function updateCharts() {
+function updateCharts(days) {
   for (var i = 0; i < devices_count; i++) {
     (function () {
       var device_id = $('input[name=device-order-'+ i +']').val();
       var device_order = i;
-      $.post( "/servers/plot_server_data", {device_id: device_id},function( data ) {
+      $.post( "/servers/plot_server_data", {device_id: device_id, days: days},function( data ) {
         createGraph(device_id, device_order, "DISK_SPACE_LEFT", data["data"]);
         createGraph(device_id, device_order, "CPU_USAGE", data["data"]);
         createGraph(device_id, device_order, "MEMORY_USAGE", data["data"]);
@@ -56,7 +57,12 @@ function updateCharts() {
   }
 }
 
+function changeTimeFrame() {
+  plot_days = document.getElementById("timeframe").value;
+  updateCharts(plot_days);
+}
+
 $(function () {
-  updateCharts();
-  setInterval(function(){updateCharts()}, 5 * 60 * 1000);
+  updateCharts(plot_days);
+  setInterval(function(){updateCharts(plot_days)}, 5 * 60 * 1000);
 });

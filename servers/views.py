@@ -35,12 +35,13 @@ def plot_server_data(request):
     device_data = dict()
     try:
         device_id = request.POST.get("device_id")
+        days = request.POST.get("days")
         now = timezone.now()
         for key, val in DATA_TYPES.items():
             data = list(DeviceData.objects.filter(
                 device__id=device_id,
                 data_type=val,
-                created__gte=(now - timedelta(days=7))
+                created__gte=(now - timedelta(days=int(days)))
             ).values("created", "data"))
             device_data[key] = data
 
